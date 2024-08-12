@@ -14,6 +14,9 @@ int offset = 75;
 
 double lastUpdateTime = 0;
 
+enum GameState { MENU, PLAYING, GAME_OVER };
+GameState state = MENU;
+
 bool ElementInDeque(Vector2 element, deque<Vector2> deque)
 {
     for (unsigned int i = 0; i < deque.size(); i++)
@@ -77,7 +80,6 @@ public:
 
 class Food
 {
-
 public:
     Vector2 position;
     Texture2D texture;
@@ -127,18 +129,22 @@ public:
     int score = 0;
     Sound eatSound;
     Sound wallSound;
+    Music bgMusic;
 
     Game()
     {
         InitAudioDevice();
         eatSound = LoadSound("Sounds/eat.mp3");
         wallSound = LoadSound("Sounds/wall.mp3");
+        bgMusic = LoadMusicStream("Sounds/menu.mp3");
+        PlayMusicStream(bgMusic);
     }
 
     ~Game()
     {
         UnloadSound(eatSound);
         UnloadSound(wallSound);
+        UnloadMusicStream(bgMusic);
         CloseAudioDevice();
     }
 
@@ -202,6 +208,13 @@ public:
     }
 };
 
+void DrawMenu()
+{
+    ClearBackground(BLACK);
+    DrawText("Snake++", 20, 20, 80, neonGreen);
+    DrawText("Press ENTER to Start", offset - 5, offset + cellSize * cellCount / 2, 30, neonGreen);
+}
+
 int main()
 {
     cout << "Starting the game..." << endl;
@@ -212,45 +225,71 @@ int main()
 
     while (WindowShouldClose() == false)
     {
+        UpdateMusicStream(game.bgMusic); // Update music stream
         BeginDrawing();
 
-        if (EventTriggered(0.2))
+        if (state == MENU)
         {
-            allowMove = true;
-            game.Update();
+            if (IsKeyPressed(KEY_ENTER))
+            {
+                state = PLAYING;
+            }
+            DrawMenu();
         }
+        else if (state == PLAYING)
+        {
+            if (EventTriggered(0.2))
+            {
+                allowMove = true;
+                game.Update();
+            }
 
-        if (IsKeyPressed(KEY_UP) && game.snake.direction.y != 1 && allowMove)
-        {
-            game.snake.direction = {0, -1};
-            game.running = true;
-            allowMove = false;
-        }
-        if (IsKeyPressed(KEY_DOWN) && game.snake.direction.y != -1 && allowMove)
-        {
-            game.snake.direction = {0, 1};
-            game.running = true;
-            allowMove = false;
-        }
-        if (IsKeyPressed(KEY_LEFT) && game.snake.direction.x != 1 && allowMove)
-        {
-            game.snake.direction = {-1, 0};
-            game.running = true;
-            allowMove = false;
-        }
-        if (IsKeyPressed(KEY_RIGHT) && game.snake.direction.x != -1 && allowMove)
-        {
-            game.snake.direction = {1, 0};
-            game.running = true;
-            allowMove = false;
-        }
+            if (IsKeyPressed(KEY_W) && game.snake.direction.y != 1 && allowMove)
+            {
+                game.snake.direction = {0, -1};
+                game.running = true;
+                allowMove = false;
+            }
+            if (IsKeyPressed(KEY_S) && game.snake.direction.y != -1 && allowMove)
+            {
+                game.snake.direction = {0, 1};
+                game.running = true;
+                allowMove = false;
+            }
+            if (IsKeyPressed(KEY_A) && game.snake.direction.x != 1 && allowMove)
+            {
+                game.snake.direction = {-1, 0};
+                game.running = true;
+                allowMove = false;
+            }
+            if (IsKeyPressed(KEY_D) && game.snake.direction.x != -1 && allowMove)
+            {
+                game.snake.direction = {1, 0};
+                game.running = true;
+                allowMove = false;
+            }
 
-        // Drawing
-        ClearBackground(BLACK);
-        DrawRectangleLinesEx(Rectangle{(float)offset - 5, (float)offset - 5, (float)cellSize * cellCount + 10, (float)cellSize * cellCount + 10}, 5, neonGreen);
-        DrawText("Snake++", offset - 5, 20, 40, neonGreen);
-        DrawText(TextFormat("%i", game.score), offset - 5, offset + cellSize * cellCount + 10, 40, neonGreen);
-        game.Draw();
+            // Drawing
+            ClearBackground(BLACK);
+            DrawRectangleLinesEx(Rectangle{(float)offset - 5, (float)offset - 5, (float)cellSize * cellCount + 10, (float)cellSize * cellCount + 10}, 5, neonGreen);
+            DrawText("Snake++", offset - 5, 20, 40, neonGreen);
+            DrawText(TextFormat("%i", game.score), offset - 5, offset + cellSize * cellCount + 10, 40, neonGreen);
+            game.Draw();
+        }
+        else if (state == GAME_OVER)
+        {
+            // Draw game over screen
+            DrawText("Game Over", offset - 5, 20, 40, neonGreen);
+            DrawText(TextFormat("Score: %i", game.score), offset - 5, offset + cellSize * cellCount / 2, 20, neonGreen);
+            DrawText("Press ENTER to Restart", offset - 5, offset + cellSize * cellCount / 2 + 40, 20, neonGreen);
+
+            if (IsKeyPressed(KEY_ENTER))
+            {
+                game.snake.Reset();
+                game.food.position = game.food.GenerateRandomPos(game.snake.body);
+                state = PLAYING;
+            }
+        }
 
         EndDrawing();
     }
