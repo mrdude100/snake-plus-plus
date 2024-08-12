@@ -1,0 +1,59 @@
+# Ignore compiled files and binaries
+*.exe
+*.o
+*.obj
+*.a
+*.lib
+*.dll
+
+# Ignore build directories
+build/
+bin/
+obj/
+
+# Ignore IDE and editor-specific files
+.vscode/
+*.code-workspace
+
+# Ignore temporary files
+*.tmp
+*.log
+*.swp
+*.swo
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore Raylib build files if applicable
+raylib-build/
+
+# Ignore additional libraries
+libgcc_s_dw2-1.dll
+libstdc++-6.dll
+
+# Ignore specific project files
+Makefile
+*.gdb
+*.gdb_history
+
+# Include these files in version control (if applicable)
+!Graphics/apple.png
+!Sounds/eat.mp3
+!Sounds/wall.mp3
+
+# Ignore configuration files
+*.json
+*.md
+
+# Ignore specific files that are auto-generated 
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.ncb
+*.sdf
+*.suo
+*.launch
+*.tasks
+*.settings
