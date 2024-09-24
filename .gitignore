@@ -39,8 +39,10 @@ Makefile
 
 # Include these files in version control (if applicable)
 !Graphics/apple.png
+!Graphics/credits.txt
 !Sounds/eat.mp3
 !Sounds/wall.mp3
+!Demo.mp4
 
 # Ignore configuration files
 *.json

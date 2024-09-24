@@ -57,6 +57,7 @@ public:
     Vector2 direction = {1, 0};
     bool addSegment = false;
 
+    // Snake Body
     void Draw()
     {
         for (unsigned int i = 0; i < body.size(); i++)
@@ -64,7 +65,7 @@ public:
             float x = body[i].x;
             float y = body[i].y;
             Rectangle segment = Rectangle{offset + x * cellSize, offset + y * cellSize, (float)cellSize, (float)cellSize};
-            DrawRectangleRounded(segment, 0.5, 6, neonGreen);
+            DrawRectangleRounded(segment, 0.5, 6, neonGreen); // Snake Body Segment
         }
     }
 
