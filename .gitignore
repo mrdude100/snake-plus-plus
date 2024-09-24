@@ -46,7 +46,7 @@ Makefile
 
 # Ignore configuration files
 *.json
-*.md
+
 
 # Ignore specific files that are auto-generated 
 *.suo
